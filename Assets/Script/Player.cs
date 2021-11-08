@@ -22,7 +22,7 @@ public partial class Player : MonoBehaviour {
     private AnimatorOverrideController newAnime;
     private Animator animator;
     public Vector3 moving, latestPos;
-    AttackType attackType;
+    public AttackType attackType;
 
 
     void Start()
@@ -39,6 +39,7 @@ public partial class Player : MonoBehaviour {
 
     void Update()
     {
+        //Debug.Log(attackType.AtType);
         test();
         _ray = new Ray(gameObject.transform.position + 0.18f * gameObject.transform.up, -gameObject.transform.up);
 
@@ -145,4 +146,6 @@ public partial class Player : MonoBehaviour {
         collider.enabled = true;
 
     }
+
+
 }

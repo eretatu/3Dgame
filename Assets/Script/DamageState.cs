@@ -2,19 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
- 
+
 public class DamageState : MonoBehaviour
 {
-    AttackType attackType;
-    private void Start()
+    AttackType attackType = new AttackType();
+     void Start()
     {
-        attackType = new AttackType();
+    }
+
+    private void Update()
+    {
+        //Debug.Log(attackType.AtType);
     }
 
     public void OnTriggerEnter(Collider other)
     {
-        
 
+        
         switch (attackType.AtType) 
         {
             case AttackType.Type.none:
@@ -30,6 +34,7 @@ public class DamageState : MonoBehaviour
 
 
         }
+        
     }
-    
+
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 
 
-public partial class AttackType 
+public  class AttackType 
 {
 
     public enum Type
@@ -16,10 +16,11 @@ public partial class AttackType
 
     }
 
-    private Type _ATtype = Type.none;
+    public Type _ATtype;
     public Type AtType
     {
-        get { return _ATtype; }
-        set { _ATtype = value; }
+        get => _ATtype;
+        set 
+        { _ATtype = value; }
     }
 }
