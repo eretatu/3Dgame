@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class Player : MonoBehaviour
-{
+public partial class Player : MonoBehaviour { 
 
     public float speed;
     public float jumpspeed;
@@ -18,10 +17,12 @@ public class Player : MonoBehaviour
     GameObject AnimSerect;
     [SerializeField]
     AnimationClip[] newClip;
+    [SerializeField]
+    Collider collider;
     private AnimatorOverrideController newAnime;
     private Animator animator;
     public Vector3 moving, latestPos;
-
+    AttackType attackType;
 
 
     void Start()
@@ -32,7 +33,8 @@ public class Player : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         _rb.constraints = RigidbodyConstraints.FreezeRotation;
         script = AnimSerect.GetComponent<AnimationSecect>();
-
+        collider.enabled = false;
+        attackType = new AttackType();
     }
 
     void Update()
@@ -124,6 +126,23 @@ public class Player : MonoBehaviour
         GetComponent<Animator>().runtimeAnimatorController = newAnime;
     }
 
- 
- 
+    public void AttackProcess(int num) 
+    {
+        
+        switch (num) 
+        {
+            case 1:
+                attackType.AtType = AttackType.Type.Attacklaunch;
+                break;
+            case 2:
+                attackType.AtType = AttackType.Type.Attacklaunch;
+                break;
+        }
+    }
+
+    public void OnAttack() 
+    {
+        collider.enabled = true;
+
+    }
 }
