@@ -10,13 +10,14 @@ public class AnimationSecect : MonoBehaviour
 {
 
     [SerializeField] GameObject[] animaUnitButton;
-    public string Attack_1;
-    public string Attack_2;
+    public string Attack_1, Attack_2, Attack_3;
     //ˆê•ÛŠÇ—p—p•Ï”
     private string Temp;
     private void Start()
     {
-
+        Attack_1 = "JAB";
+        Attack_2 = "RHK";
+        Attack_3 = "MC2_SAMK";
         animationSerect();
 
     }
