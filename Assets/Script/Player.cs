@@ -1,46 +1,45 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 
-public partial class Player : MonoBehaviour { 
-
+public partial class Player : MonoBehaviour 
+{ 
+    //移動速度
     public float speed;
-    public float jumpspeed;
-
-
+    //入力受付終了
+    private Tween combo;
+    //入力受付時間
+    private float AttackChance = 0.7f;
+    //コンボの上限
+    private int AttackCount = 0;
+    //プレイヤーのポジション
+    private Vector3 _Player_pos;
     private Rigidbody _rb;
     private bool _isGrounded = false;
+    private bool _OnAttack = true;
     private Ray _ray;
+    public Vector3 moving, latestPos;
     private AnimationSecect script;
     [SerializeField]
     GameObject AnimSerect;
-    [SerializeField]
-    AnimationClip[] newClip;
-    [SerializeField]
-    Collider collider;
-    private AnimatorOverrideController newAnime;
     private Animator animator;
-    public Vector3 moving, latestPos;
-    public AttackType attackType;
+
+    
 
 
     void Start()
     {
-        newAnime = new AnimatorOverrideController();
-        newAnime.runtimeAnimatorController = GetComponent<Animator>().runtimeAnimatorController;
+
         animator = GetComponent<Animator>();
         _rb = GetComponent<Rigidbody>();
         _rb.constraints = RigidbodyConstraints.FreezeRotation;
         script = AnimSerect.GetComponent<AnimationSecect>();
-        collider.enabled = false;
-        attackType = new AttackType();
     }
 
     void Update()
     {
-        //Debug.Log(attackType.AtType);
-        test();
         _ray = new Ray(gameObject.transform.position + 0.18f * gameObject.transform.up, -gameObject.transform.up);
 
         _isGrounded = Physics.SphereCast(_ray, 0.13f, 0.08f);
@@ -51,27 +50,17 @@ public partial class Player : MonoBehaviour {
 
         if (_isGrounded)
         {
-
             MovementControll();
             Movement();
-            if (Input.GetButtonDown("Jump"))
-            {
-                animator.SetTrigger("Attack");
-            }
+            ComboAttack();
+
         }
+      
     }
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
         RotateToMovingDirection();
-    }
-
-    void MovementControll()
-    {
-        //斜め移動と縦横の移動を同じ速度にするためにVector3をNormalize()する。
-        moving = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-        moving.Normalize();
-        moving = moving * speed;
     }
 
     public void RotateToMovingDirection()
@@ -84,68 +73,90 @@ public partial class Player : MonoBehaviour {
             Quaternion rot = Quaternion.LookRotation(differenceDis);
             rot = Quaternion.Slerp(_rb.transform.rotation, rot, 0.1f);
             this.transform.rotation = rot;
-            animator.SetBool("Run",true);
-            
+            //アニメーションを追加する場合
+            animator.SetBool("Run", true);
         }
         else
         {
             animator.SetBool("Run", false);
         }
     }
+    void MovementControll()
+    {
+        var horizontal = Input.GetAxisRaw("Horizontal");
+        var virtical = Input.GetAxisRaw("Vertical");
+        //斜め移動と縦横の移動を同じ速度にするためにVector3をNormalize()する。
+        Vector3 cameraForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
+        Vector3 moveForward = cameraForward * virtical + Camera.main.transform.right * horizontal;
+        moving = new Vector3(horizontal, 0, virtical);
+        moving.Normalize();         
+        moving = moveForward * speed + new Vector3(0, _rb.velocity.y, 0);
+        _rb.velocity = moving;
+    }
 
     void Movement()
     {
-        //攻撃中の移動制御
-        if(!animator.GetCurrentAnimatorStateInfo(0).IsTag("attack"))
-        {
-            _rb.velocity = moving;
-        }
-        
-        /*if (Input.GetButtonDown("Jump"))
-        {
-            _rb.velocity = new Vector3(_rb.velocity.x, 5, _rb.velocity.z);
-        }*/
-    }
 
-    public void test() 
+    }
+    
+    
+
+    void ComboAttack()
     {
 
-        //newClipにはインスペクターでアニメーションClipを登録
-        foreach(var addclip in newClip) 
+        if (Input.GetButtonDown("Jump") && _OnAttack)
         {
-            //Attack_1にはボタンから取得したClip名が入っている
-            if(addclip.name == script.Attack_1) 
+            switch (AttackCount)
             {
-                newAnime["MC2_SAMK"] = addclip; 
-            }
-            if(addclip.name == script.Attack_2) 
-            {
-                newAnime["ScrewK01_zero"] = addclip;
+                case 0:
+                    animator.CrossFadeInFixedTime(script.Attack_1, 0);
+                    AttackCount++;
+                    Debug.Log("Attack1");
+                    combo = DOVirtual.DelayedCall(AttackChance, () => { AttackCount = 0; Debug.Log("Attack1を終了"); });
+                    _OnAttack = false;
+                    DOVirtual.DelayedCall(0.3f, () => { _OnAttack = true; Debug.Log("クールタイム終了"); });
+                    break;
+                case 1:
+                    combo.Kill();
+                    animator.CrossFadeInFixedTime(script.Attack_2, 0);
+                    AttackCount++;
+                    Debug.Log("Attack2");
+                    combo = DOVirtual.DelayedCall(AttackChance, () => { AttackCount = 0; Debug.Log("Attack2を終了"); });
+                    _OnAttack = false;
+                    DOVirtual.DelayedCall(0.3f, () => { _OnAttack = true; Debug.Log("クールタイム終了"); });
+                    break;
+                case 2:
+                    combo.Kill();
+                    animator.CrossFadeInFixedTime(script.Attack_3, 0);
+                    Debug.Log("Attack3");
+                    AttackCount = 0;
+                    _OnAttack = false;
+                    DOVirtual.DelayedCall(0.3f, () => { _OnAttack = true; Debug.Log("クールタイム終了"); });
+                    break;
             }
         }
-            
-        GetComponent<Animator>().runtimeAnimatorController = newAnime;
+
     }
 
-    public void AttackProcess(int num) 
+    public void OnTriggerEnter(Collider other)
     {
-        
-        switch (num) 
+
+        if (other.CompareTag("Enemy"))
         {
-            case 1:
-                attackType.AtType = AttackType.Type.Attacklaunch;
-                break;
-            case 2:
-                attackType.AtType = AttackType.Type.Attacklaunch;
-                break;
+            if (other.transform.root.gameObject.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsTag("launch"))
+            {
+                this.gameObject.transform.position += new Vector3(0, 1, 0);
+                animator.CrossFadeInFixedTime("damage", 0);
+                Debug.Log("吹っ飛び");
+            }
+            else if (other.transform.root.gameObject.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsTag("Rebellion"))
+            {
+                Debug.Log("ノックバック");
+            }
+
         }
-    }
-
-    public void OnAttack() 
-    {
-        collider.enabled = true;
 
     }
-
-
 }
+
+
