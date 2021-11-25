@@ -14,19 +14,31 @@ public partial class Player : MonoBehaviour
     private float AttackChance = 0.7f;
     //コンボの上限
     private int AttackCount = 0;
-    //プレイヤーのポジション
-    private Vector3 _Player_pos;
+    private float x;
+    private float z;
     private Rigidbody _rb;
     private bool _isGrounded = false;
     private bool _OnAttack = true;
     private Ray _ray;
-    public Vector3 moving, latestPos;
+    private Vector3 Player_pos;
     private AnimationSecect script;
     [SerializeField]
     GameObject AnimSerect;
     private Animator animator;
 
-    
+    enum PlayerState 
+    {
+        idle,
+        move,
+        attack
+    }
+    private PlayerState _currentState = PlayerState.idle;
+    private PlayerState currentState 
+    {
+        get => _currentState;
+        set { _currentState = value; }
+    }
+
 
 
     void Start()
@@ -36,6 +48,7 @@ public partial class Player : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         _rb.constraints = RigidbodyConstraints.FreezeRotation;
         script = AnimSerect.GetComponent<AnimationSecect>();
+        Player_pos = GetComponent<Transform>().position;
     }
 
     void Update()
@@ -50,62 +63,59 @@ public partial class Player : MonoBehaviour
 
         if (_isGrounded)
         {
-            MovementControll();
-            Movement();
+            x = Input.GetAxisRaw("Horizontal");
+            z = Input.GetAxisRaw("Vertical");
             ComboAttack();
-
         }
-      
+
     }
 
     void FixedUpdate()
     {
-        RotateToMovingDirection();
+        CharactorMove();
     }
 
-    public void RotateToMovingDirection()
+
+
+
+    void CharactorMove() 
     {
-        Vector3 differenceDis = new Vector3(transform.position.x, 0, transform.position.z) - new Vector3(latestPos.x, 0, latestPos.z);
-        latestPos = transform.position;
-        //移動してなくても回転してしまうので、一定の距離以上移動したら回転させる
-        if (Mathf.Abs(differenceDis.x) > 0.001f || Mathf.Abs(differenceDis.z) > 0.001f)
+        
+
+        if((x != 0  || z !=0) && !animator.GetCurrentAnimatorStateInfo(0).IsTag("launch") && !animator.GetCurrentAnimatorStateInfo(0).IsTag("Rebellion")) 
         {
-            Quaternion rot = Quaternion.LookRotation(differenceDis);
-            rot = Quaternion.Slerp(_rb.transform.rotation, rot, 0.1f);
-            this.transform.rotation = rot;
-            //アニメーションを追加する場合
+            currentState = PlayerState.move;
+            Vector3 cameraForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
+            Vector3 moveForward = cameraForward * z + Camera.main.transform.right * x;
+            _rb.velocity = moveForward * speed + new Vector3(0, _rb.velocity.y, 0);
+            Vector3 diff = transform.position - Player_pos;
             animator.SetBool("Run", true);
+            if (Mathf.Abs(diff.x) > 0.001f || Mathf.Abs(diff.z) > 0.001f)
+            {
+                Quaternion rot = Quaternion.LookRotation(diff);
+                rot = Quaternion.Slerp(_rb.transform.rotation, rot, 0.1f);
+                this.transform.rotation = rot;
+
+            }
         }
-        else
+        else 
         {
+            currentState = PlayerState.idle;
             animator.SetBool("Run", false);
         }
-    }
-    void MovementControll()
-    {
-        var horizontal = Input.GetAxisRaw("Horizontal");
-        var virtical = Input.GetAxisRaw("Vertical");
-        //斜め移動と縦横の移動を同じ速度にするためにVector3をNormalize()する。
-        Vector3 cameraForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
-        Vector3 moveForward = cameraForward * virtical + Camera.main.transform.right * horizontal;
-        moving = new Vector3(horizontal, 0, virtical);
-        moving.Normalize();         
-        moving = moveForward * speed + new Vector3(0, _rb.velocity.y, 0);
-        _rb.velocity = moving;
-    }
+       
+        
+        Player_pos = transform.position;
 
-    void Movement()
-    {
 
     }
-    
-    
+
+
+
 
     void ComboAttack()
     {
-
-        if (Input.GetButtonDown("Jump") && _OnAttack)
-        {
+        if(Input.GetButtonDown("Jump") && _OnAttack) { 
             switch (AttackCount)
             {
                 case 0:
@@ -135,7 +145,6 @@ public partial class Player : MonoBehaviour
                     break;
             }
         }
-
     }
 
     public void OnTriggerEnter(Collider other)

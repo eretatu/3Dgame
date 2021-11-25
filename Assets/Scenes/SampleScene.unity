@@ -1333,9 +1333,9 @@ MonoBehaviour:
     m_LegacyHeadingDefinition: -1
     m_LegacyVelocityFilterStrength: -1
   m_HorizontalAxis:
-    Value: 0
+    Value: 360
     m_SpeedMode: 1
-    m_MaxSpeed: 3
+    m_MaxSpeed: 1
     m_AccelTime: 0.1
     m_DecelTime: 0.1
     m_InputAxisName: Mouse X
@@ -1343,7 +1343,7 @@ MonoBehaviour:
     m_InvertInput: 0
     m_MinValue: -180
     m_MaxValue: 180
-    m_Wrap: 0
+    m_Wrap: 1
     m_Recentering:
       m_enabled: 0
       m_WaitTime: 1
@@ -2251,8 +2251,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1687258581}
-  m_LocalRotation: {x: 0.070714034, y: 0, z: 0, w: 0.99749666}
-  m_LocalPosition: {x: 1.0477889, y: 3.089905, z: -8.544381}
+  m_LocalRotation: {x: -0.070714034, y: -0.00000008720393, z: 0.000000006182017, w: -0.99749666}
+  m_LocalPosition: {x: 1.047788, y: 3.089905, z: -8.544381}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -2492,6 +2492,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1844540092}
   - component: {fileID: 1844540091}
+  - component: {fileID: 1844540093}
   m_Layer: 0
   m_Name: CM vcam1
   m_TagString: Untagged
@@ -2542,13 +2543,43 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1844540090}
   m_LocalRotation: {x: 0.39992028, y: -0.033581458, z: 0.014664397, w: 0.9158172}
-  m_LocalPosition: {x: 1.0477889, y: 3.089905, z: -8.544381}
+  m_LocalPosition: {x: 1.047788, y: 3.089905, z: -8.544381}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1366275903}
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 47.18, y: -4.2, z: 0}
+--- !u!114 &1844540093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1844540090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e501d18bb52cf8c40b1853ca4904654f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_CollideAgainst:
+    serializedVersion: 2
+    m_Bits: 1
+  m_IgnoreTag: 
+  m_TransparentLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_MinimumDistanceFromTarget: 0.1
+  m_AvoidObstacles: 1
+  m_DistanceLimit: 0
+  m_MinimumOcclusionTime: 0
+  m_CameraRadius: 0.1
+  m_Strategy: 1
+  m_MaximumEffort: 4
+  m_SmoothingTime: 0
+  m_Damping: 0
+  m_DampingWhenOccluded: 0
+  m_OptimalTargetDistance: 0
 --- !u!1 &1860560086
 GameObject:
   m_ObjectHideFlags: 0
