@@ -65,8 +65,29 @@ public partial class Player : MonoBehaviour
         {
             x = Input.GetAxisRaw("Horizontal");
             z = Input.GetAxisRaw("Vertical");
-            ComboAttack();
+            switch (currentState) 
+            {
+                case PlayerState.idle:
+                    if (Input.GetButtonDown("Jump"))
+                    {
+                        ComboAttack();
+                    }
+                    break;
+                case PlayerState.move:
+                    if (Input.GetButtonDown("Jump")) 
+                    {
+                        ComboAttack();
+                    }
+                    break;
+                case PlayerState.attack:
+                    if (!Input.GetButtonDown("Jump")) 
+                    {
+                        EndAttack();
+                    }
+                    break;
+            }
         }
+
 
     }
 
@@ -78,11 +99,9 @@ public partial class Player : MonoBehaviour
 
 
 
-    void CharactorMove() 
+    void CharactorMove()
     {
-        
-
-        if((x != 0  || z !=0) && !animator.GetCurrentAnimatorStateInfo(0).IsTag("launch") && !animator.GetCurrentAnimatorStateInfo(0).IsTag("Rebellion")) 
+        if ((x != 0 || z != 0) && !animator.GetCurrentAnimatorStateInfo(0).IsTag("launch") && !animator.GetCurrentAnimatorStateInfo(0).IsTag("Rebellion"))
         {
             currentState = PlayerState.move;
             Vector3 cameraForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
@@ -95,7 +114,6 @@ public partial class Player : MonoBehaviour
                 Quaternion rot = Quaternion.LookRotation(diff);
                 rot = Quaternion.Slerp(_rb.transform.rotation, rot, 0.1f);
                 this.transform.rotation = rot;
-
             }
         }
         else 
@@ -103,18 +121,14 @@ public partial class Player : MonoBehaviour
             currentState = PlayerState.idle;
             animator.SetBool("Run", false);
         }
-       
-        
+
+
         Player_pos = transform.position;
-
-
     }
-
-
-
 
     void ComboAttack()
     {
+        currentState = PlayerState.attack;
         if(Input.GetButtonDown("Jump") && _OnAttack) { 
             switch (AttackCount)
             {
@@ -147,6 +161,10 @@ public partial class Player : MonoBehaviour
         }
     }
 
+    void EndAttack() 
+    {
+        currentState = PlayerState.idle;
+    }
     public void OnTriggerEnter(Collider other)
     {
 
