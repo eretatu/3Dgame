@@ -73,6 +73,7 @@ public partial class PlayerCommon : MonoBehaviour
 
         if (_isGrounded)
         {
+            LockOnTarget();
             x = Input.GetAxisRaw("Horizontal");
             z = Input.GetAxisRaw("Vertical");
             switch (currentState)
@@ -86,6 +87,10 @@ public partial class PlayerCommon : MonoBehaviour
                     {
                         _OnMove = true;
                     }
+                    else if (_OnLockOn)
+                    {
+                        transform.LookAt(LockTarget.target.transform);
+                    }
                     break;
                 case PlayerState.move:
                     if (Input.GetMouseButtonDown(0))
@@ -96,6 +101,10 @@ public partial class PlayerCommon : MonoBehaviour
                     {
                         _OnMove = false;
                     }
+                    else if (_OnLockOn)
+                    {
+                        transform.LookAt(LockTarget.target.transform);
+                    }
                     break;
                 case PlayerState.attack:
                     if (!Input.GetMouseButtonDown(0))
@@ -104,14 +113,8 @@ public partial class PlayerCommon : MonoBehaviour
                     }
                     break;
             }
-            if (!_OnLockOn) 
-            {
-                LockOnTarget();
-            }
-            else if (_OnLockOn) 
-            {
-                
-            }
+            
+
         }
 
     }
@@ -132,10 +135,7 @@ public partial class PlayerCommon : MonoBehaviour
         animator.SetBool("Run", false);
     }
 
-    void EndAttack() 
-    {
-        currentState = PlayerState.idle;
-    }
+
 
     void InvalidCollider() 
     {
@@ -170,8 +170,28 @@ public partial class PlayerCommon : MonoBehaviour
     {
         if(LockTarget.target != null) 
         {
-            transform.LookAt(LockTarget.target.transform);
+            //ロックオン開始
+            if (Input.GetKeyDown(KeyCode.R) && !_OnLockOn)
+            {
+                _OnLockOn = true;
+                
+            }
+            //ロックオン解除
+            else if (Input.GetKeyDown(KeyCode.R) && _OnLockOn)
+            {
+                _OnLockOn = false;
+                return;
+            }
         }
+        //ロックオン中にtargetがいない場合
+        if(LockTarget.target == null) 
+        {
+            _OnLockOn = false;
+            return;
+        }
+
+
+
     }
 
 

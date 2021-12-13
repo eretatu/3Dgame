@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: JAB
   m_EditorClassIdentifier: 
   _ActionType: 1
-  _Id: 1
+  _IndicatesName: "\u30B8\u30E3\u30D6"
   _ActionName: JAB
   _Damage: 10
