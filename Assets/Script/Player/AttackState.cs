@@ -43,6 +43,11 @@ public partial class PlayerCommon
         }
     }
 
+    void EndAttack()
+    {
+        currentState = PlayerState.idle;
+    }
+
     public ActionData actionData
     {
         get { return action; }

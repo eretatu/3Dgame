@@ -54,7 +54,7 @@ public class AnimationSecect : MonoBehaviour
         foreach (var Value in _ActionDataBase.ActionList)
         {
             GameObject buttonObject = Instantiate(BaseButton, BaseButton.transform.parent);
-            buttonObject.transform.Find("text").GetComponent<TextMeshProUGUI>().text = Value.ActionName;
+            buttonObject.transform.Find("text").GetComponent<TextMeshProUGUI>().text = Value.IndicatesName;
             buttonObject.GetComponent<Button>().onClick.AddListener(() => 
             {
                 Temp = Value;

@@ -13,7 +13,7 @@ public class ActionData : ScriptableObject
     [SerializeField]
     private ActionType _ActionType;
     [SerializeField]
-    private int _Id;
+    private string _IndicatesName;
     [SerializeField]
     private string _ActionName;
     [SerializeField]
@@ -24,9 +24,9 @@ public class ActionData : ScriptableObject
         get => _ActionType;
     }
 
-    public int Id 
+    public string IndicatesName
     {
-        get => _Id;
+        get => _IndicatesName;
     }
 
     public string ActionName 
