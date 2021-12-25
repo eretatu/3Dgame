@@ -7,7 +7,10 @@ using DG.Tweening;
 public partial class PlayerCommon : MonoBehaviour
 {
     //移動速度
-    public float speed;
+    [SerializeField]
+    private float _speed;
+    [SerializeField]
+    private float _LSpeed;
     //入力受付終了
     private Tween combo;
     //入力受付時間
@@ -40,7 +43,8 @@ public partial class PlayerCommon : MonoBehaviour
     {
         idle,
         move,
-        attack
+        attack,
+        lockOn
     }
     private PlayerState _currentState = PlayerState.idle;
     private PlayerState currentState
@@ -87,10 +91,6 @@ public partial class PlayerCommon : MonoBehaviour
                     {
                         _OnMove = true;
                     }
-                    else if (_OnLockOn)
-                    {
-                        transform.LookAt(LockTarget.target.transform);
-                    }
                     break;
                 case PlayerState.move:
                     if (Input.GetMouseButtonDown(0))
@@ -101,10 +101,6 @@ public partial class PlayerCommon : MonoBehaviour
                     {
                         _OnMove = false;
                     }
-                    else if (_OnLockOn)
-                    {
-                        transform.LookAt(LockTarget.target.transform);
-                    }
                     break;
                 case PlayerState.attack:
                     if (!Input.GetMouseButtonDown(0))
@@ -113,36 +109,37 @@ public partial class PlayerCommon : MonoBehaviour
                     }
                     break;
             }
-            
+            if (_OnLockOn) 
+            {
+                transform.LookAt(LockTarget.target.transform);
+            }
+
 
         }
 
     }
     void FixedUpdate()
     {
-        if (_OnMove)
+        if (_OnMove && !_OnLockOn)
         {
             CharactorMove();
+        }
+        else if (_OnLockOn) 
+        {
+            LockOnMove();
         }
         else if (!_OnMove)
         {
             Endmove();
         }
     }
-    void Endmove() 
-    {
-        currentState = PlayerState.idle;
-        animator.SetBool("Run", false);
-    }
 
-
-
-    void InvalidCollider() 
+    void InvalidCollider()
     {
         collider.enabled = false;
     }
 
-    void ValidityCollider() 
+    void ValidityCollider()
     {
         collider.enabled = true;
     }
@@ -166,27 +163,31 @@ public partial class PlayerCommon : MonoBehaviour
 
     }
 
-    private void LockOnTarget() 
+    private void LockOnTarget()
     {
-        if(LockTarget.target != null) 
+        if (LockTarget.target != null)
         {
             //ロックオン開始
             if (Input.GetKeyDown(KeyCode.R) && !_OnLockOn)
             {
                 _OnLockOn = true;
-                
+                animator.SetBool("LockOn", true);
+                animator.SetFloat("Move", 0f);
+
             }
             //ロックオン解除
             else if (Input.GetKeyDown(KeyCode.R) && _OnLockOn)
             {
                 _OnLockOn = false;
+                animator.SetBool("LockOn", false);
                 return;
             }
         }
         //ロックオン中にtargetがいない場合
-        if(LockTarget.target == null) 
+        if (LockTarget.target == null)
         {
             _OnLockOn = false;
+            animator.SetBool("LockOn", false);
             return;
         }
 
@@ -196,5 +197,3 @@ public partial class PlayerCommon : MonoBehaviour
 
 
 }
-
-
