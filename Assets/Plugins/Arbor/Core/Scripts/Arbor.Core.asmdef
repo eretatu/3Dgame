@@ -1,0 +1,8 @@
+{
+    "name": "Arbor.Core",
+    "references": [
+        "Arbor"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": []
+}

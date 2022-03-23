@@ -1,0 +1,12 @@
+{
+    "name": "Arbor.Core.Editor",
+    "references": [
+        "Arbor",
+        "Arbor.Core",
+        "ArborEditor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": []
+}

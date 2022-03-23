@@ -1,0 +1,13 @@
+{
+    "name": "Arbor.BuiltInBehaviours.Editor",
+    "references": [
+        "Arbor",
+        "Arbor.Core",
+        "Arbor.BuiltInBehaviours",
+        "ArborEditor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": []
+}
