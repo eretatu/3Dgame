@@ -145,21 +145,13 @@ public partial class PlayerCommon : MonoBehaviour
     }
     public void OnTriggerEnter(Collider other)
     {
-
-        if (other.CompareTag("Enemy"))
+        
+        var Hit = other.gameObject.GetComponent<IDamagable>();
+        if (Hit != null && actionData != null) 
         {
-            if (other.transform.root.gameObject.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsTag("launch"))
-            {
-                this.gameObject.transform.position += new Vector3(0, 1, 0);
-                //animator.CrossFadeInFixedTime("damage", 0);
-                Debug.Log("吹っ飛び");
-            }
-            else if (other.transform.root.gameObject.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsTag("Rebellion"))
-            {
-                Debug.Log("ノックバック");
-            }
-
+            Hit.AddDamage(actionData.Damege, actionData.actionType);
         }
+        
 
     }
 

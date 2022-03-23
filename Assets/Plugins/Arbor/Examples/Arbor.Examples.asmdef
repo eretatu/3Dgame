@@ -1,0 +1,10 @@
+{
+    "name": "Arbor.Examples",
+    "references": [
+        "Arbor",
+        "Arbor.Core",
+        "Arbor.BuiltInBehaviours"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": []
+}

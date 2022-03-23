@@ -4,9 +4,22 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class EnemyController : MonoBehaviour
+public class EnemyController : MonoBehaviour,IDamagable
 {
-    Animator animator;
+    
+    [SerializeField]
+    EnemtStats enemtStats;
+    [SerializeField]
+    GameObject Target;
+    [SerializeField]
+    float _MoveDistance;
+    [SerializeField]
+    float _AttackDistance;
+    [SerializeField]
+    float _MoveSpeed;
+    private Rigidbody _rb;
+    float MaxHp;
+    Animator E_animator;
 
     enum EnemyState
     {
@@ -24,7 +37,9 @@ public class EnemyController : MonoBehaviour
     }
     void Start()
     {
-        animator = GetComponent<Animator>();
+        MaxHp = enemtStats.EnemyHp;
+        E_animator = this.gameObject.GetComponent<Animator>();
+        _rb = GetComponent<Rigidbody>();
     }
 
     void Update()
@@ -32,7 +47,6 @@ public class EnemyController : MonoBehaviour
         switch (currentState)
         {
             case EnemyState.Stay:
-                TargetSearch();
                 break;
             case EnemyState.Move:
                 break;
@@ -42,11 +56,43 @@ public class EnemyController : MonoBehaviour
                 break;
 
         }
+
+        if(Target != null) 
+        {
+            Vector3 TargetPos = Target.transform.position;
+
+            TargetPos.y = transform.position.y;
+            
+
+            var distance = Vector3.Distance(transform.position, Target.transform.position);
+
+            if(distance < _MoveDistance && distance > _AttackDistance) 
+            {
+                transform.LookAt(TargetPos);
+                var direction = (Target.transform.position - transform.position).normalized;
+                _rb.velocity = direction * _MoveSpeed;
+            }
+            if(distance < _AttackDistance) 
+            {
+                E_animator.SetTrigger("IsAttack");
+            }
+        }
     }
 
-    private void TargetSearch()
+    public void AddDamage(float damage, ActionData.ActionType actionData) 
     {
+        MaxHp -= damage;
+        switch (actionData)
+        {
+            case ActionData.ActionType.launch:
+                Debug.Log(actionData);
+                E_animator.CrossFadeInFixedTime("damege", 0);
+                break;
+            case ActionData.ActionType.Rebellion:
+                Debug.Log(actionData);
+                break;
+        }
+        Debug.Log(MaxHp);
 
     }
-
 }

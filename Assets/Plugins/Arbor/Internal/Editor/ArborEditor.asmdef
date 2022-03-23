@@ -1,0 +1,10 @@
+{
+    "name": "ArborEditor",
+    "references": [
+        "Arbor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": []
+}

@@ -1,0 +1,9 @@
+{
+    "name": "Arbor.BuiltInBehaviours",
+    "references": [
+        "Arbor",
+        "Arbor.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": []
+}
