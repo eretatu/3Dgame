@@ -68,13 +68,14 @@ public class EnemyController : MonoBehaviour,IDamagable
 
             if(distance < _MoveDistance && distance > _AttackDistance) 
             {
+                E_animator.SetBool("Attack", false);
                 transform.LookAt(TargetPos);
                 var direction = (Target.transform.position - transform.position).normalized;
                 _rb.velocity = direction * _MoveSpeed;
             }
             if(distance < _AttackDistance) 
             {
-                E_animator.SetTrigger("IsAttack");
+                E_animator.SetBool("Attack",true);
             }
         }
     }
